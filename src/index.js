@@ -16,7 +16,7 @@ import * as serviceWorker from './serviceWorker';
 
 function Square(props) {
     return (
-        <button className='square' onClick={props.onClick}>
+        <button className='square' onClick={() => props.onClick()}>
             {props.value}
         </button>
     )
@@ -25,7 +25,7 @@ function Square(props) {
 class Board extends React.Component {
     renderSquare(i) {
         return <Square value={this.props.squares[i]}
-                       onClick={() => this.onClick(i)}/>;
+                       onClick={() => this.props.onClick(i)}/>;
     }
 
     // handleClick(i) {
@@ -119,18 +119,20 @@ class Game extends React.Component {
     render() {
         const history = this.state.history;
         const current = history[history.length - 1];
-        const winner = calculateWinner(current);
+        const winner = calculateWinner(current.squares);
+        console.log('current', current);
+        console.log('winner', winner);
         let status;
         if(winner) {
             status = 'winner: ' + winner
         }else {
-            status = 'next player is: ' + winner === 'X' ? 'O' : 'X';
+            status = 'next player is: ' + (winner === 'X' ? 'O' : 'X');
         }
 
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board  squares={current.squares} onclick={(i) => this.handleClick()} />
+                    <Board  squares={current.squares} onClick={(i) => this.handleClick(i)} />
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
