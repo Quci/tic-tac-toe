@@ -27,28 +27,28 @@ function Square(props) {
 
 class Board extends React.Component {
     renderSquare(i) {
-        return <Square value={this.props.squares[i]}
+        return <Square value={this.props.squares[i]} key={i}
                        onClick={() => this.props.onClick(i)}/>;
     }
 
     render() {
+        let boardRows = [];
+        for (let i = 0; i < height; i++) {
+            let row = [];
+            for (let j = 0; j < width; j++) {
+                row.push(this.renderSquare(i * width + j))
+            }
+            boardRows.push(row);
+        }
+
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {
+                    boardRows.map((row, index) =>
+                        <div className="board-row" key={index}>
+                            {row}
+                        </div>)
+                }
             </div>
         );
     }
@@ -103,7 +103,7 @@ class Game extends React.Component {
         const moves = history.map((step, move) => {
             const desc = move ? 'Go to move #' + move : 'Go to game start';
             return (
-                <li key={move} className={this.state.stepNumber === move? 'font-bold' : ''}>
+                <li key={move} className={this.state.stepNumber === move ? 'font-bold' : ''}>
                     <button onClick={() => this.jumpTo(move)}>{desc}</button>
                     <span>coord: {step.lastCoord.map(item => item + 1).join()}</span>
                 </li>
