@@ -19,7 +19,7 @@ const height = 3;
 
 function Square(props) {
     return (
-        <button className='square' onClick={() => props.onClick()}>
+        <button onClick={() => props.onClick()} className={(props.active ? 'active' : '') + ' square'}>
             {props.value}
         </button>
     )
@@ -27,8 +27,8 @@ function Square(props) {
 
 class Board extends React.Component {
     renderSquare(i) {
-        return <Square value={this.props.squares[i]} key={i}
-                       onClick={() => this.props.onClick(i)}/>;
+        return <Square value={this.props.squares[i]} key={i} winnerCoords={this.props.winnerCoords}
+                       onClick={() => this.props.onClick(i)} active={this.props.winnerCoords.indexOf(i) !== -1} />;
     }
 
     render() {
@@ -107,7 +107,9 @@ class Game extends React.Component {
     render() {
         const history = this.state.history.slice();
         const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
+        let winnerResult = calculateWinner(current.squares);
+        const winner = winnerResult ? winnerResult.player : null;
+        const winnerCoords = winnerResult ? winnerResult.winnerCoords : [];
 
         if(this.state.sort === 'desc') {
             history.reverse();
@@ -136,7 +138,7 @@ class Game extends React.Component {
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
+                    <Board squares={current.squares} onClick={(i) => this.handleClick(i)} winnerCoords={winnerCoords} />
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
@@ -162,7 +164,10 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return {
+                player: squares[a],
+                winnerCoords: lines[i],
+            };
         }
     }
     return null;

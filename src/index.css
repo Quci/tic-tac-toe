@@ -50,6 +50,10 @@ ol, ul {
   outline: none;
 }
 
+.square.active {
+   color: #fa17af;
+}
+
 .kbd-navigation .square:focus {
   background: #ddd;
 }
