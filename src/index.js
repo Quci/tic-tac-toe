@@ -115,7 +115,7 @@ class Game extends React.Component {
             history.reverse();
         }
 
-        const moves = history.map((step, index) => {
+        const moves = history.map((step) => {
             let move = step.recordStep;
             const desc = move ? 'Go to move #' + move : 'Go to game start';
             return (
