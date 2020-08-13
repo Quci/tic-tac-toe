@@ -73,7 +73,7 @@ class Game extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
+        if (calculateWinner(squares).winnerPlayer || squares[i]) {
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
@@ -108,8 +108,8 @@ class Game extends React.Component {
         const history = this.state.history.slice();
         const current = history[this.state.stepNumber];
         let winnerResult = calculateWinner(current.squares);
-        const winner = winnerResult ? winnerResult.player : null;
-        const winnerCoords = winnerResult ? winnerResult.winnerCoords : [];
+        const winner = winnerResult.winnerPlayer;
+        const winnerCoords = winnerResult.winnerCoords;
 
         if(this.state.sort === 'desc') {
             history.reverse();
@@ -161,16 +161,20 @@ function calculateWinner(squares) {
         [0, 4, 8],
         [2, 4, 6],
     ];
+
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             return {
-                player: squares[a],
+                winnerPlayer: squares[a],
                 winnerCoords: lines[i],
             };
         }
     }
-    return null;
+    return {
+        winnerPlayer: null,
+        winnerCoords: [],
+    };
 }
 
 // ========================================
