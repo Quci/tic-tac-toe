@@ -61,9 +61,11 @@ class Game extends React.Component {
             history: [{
                 squares: Array(9).fill(null),
                 lastCoord: [],
+                recordStep: 0,
             }],
             stepNumber: 0,
             xIsNext: true,
+            sort: 'asc',  // 'asc' , 'desc'
         };
     }
 
@@ -82,6 +84,7 @@ class Game extends React.Component {
             history: history.concat([{
                 squares: squares,
                 lastCoord: [coordX, coordY],
+                recordStep: history.length,
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
@@ -95,20 +98,33 @@ class Game extends React.Component {
         })
     }
 
+    handleSortClick() {
+        this.setState({
+            sort: this.state.sort === 'asc'? 'desc' : 'asc',
+        })
+    }
+
     render() {
-        const history = this.state.history;
+        const history = this.state.history.slice();
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
-        const moves = history.map((step, move) => {
+        if(this.state.sort === 'desc') {
+            history.reverse();
+        }
+
+        const moves = history.map((step, index) => {
+            let move = step.recordStep;
             const desc = move ? 'Go to move #' + move : 'Go to game start';
             return (
                 <li key={move} className={this.state.stepNumber === move ? 'font-bold' : ''}>
                     <button onClick={() => this.jumpTo(move)}>{desc}</button>
-                    <span>coord: {step.lastCoord.map(item => item + 1).join()}</span>
+                    <span>coord: {step.lastCoord.map(item => item + 1).join()}---{step.recordStep}</span>
                 </li>
             );
         })
+
+        const sort = <button onClick={() => this.handleSortClick()}>{this.state.sort}</button>
 
         let status;
         if (winner) {
@@ -124,6 +140,7 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
+                    <div>{sort}</div>
                     <ol>{moves}</ol>
                 </div>
             </div>
