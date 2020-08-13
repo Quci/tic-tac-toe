@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+// import App from './App';
+// import * as serviceWorker from './serviceWorker';
 
 // class Square extends React.Component {
 //     render() {
@@ -13,6 +13,9 @@ import * as serviceWorker from './serviceWorker';
 //         );
 //     }
 // }
+
+const width = 3;
+const height = 3;
 
 function Square(props) {
     return (
@@ -56,7 +59,8 @@ class Game extends React.Component {
         super(props);
         this.state = {
             history: [{
-                squares: Array(9).fill(null)
+                squares: Array(9).fill(null),
+                lastCoord: [],
             }],
             stepNumber: 0,
             xIsNext: true,
@@ -71,9 +75,13 @@ class Game extends React.Component {
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+        const coordX = Math.floor(i / width)
+        const coordY = i % width;
         this.setState({
             history: history.concat([{
-                squares: squares
+                squares: squares,
+                lastCoord: [coordX, coordY],
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
@@ -97,6 +105,7 @@ class Game extends React.Component {
             return (
                 <li key={move}>
                     <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                    <span>coord: {step.lastCoord.map(item => item + 1).join()}</span>
                 </li>
             );
         })
